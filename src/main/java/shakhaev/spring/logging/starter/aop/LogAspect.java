@@ -24,22 +24,30 @@ public class LogAspect {
     public void loggingMethods() {
     }
 
-    @Before("loggingMethods()")
+    @Pointcut("@within(org.springframework.web.bind.annotation.RestController)")
+    public void restControllerMethods() {
+    }
+
+    @Pointcut("loggingMethods || restControllerMethods()")
+    public void loggingPointcut() {
+    }
+
+    @Before("loggingPointcut()")
     public void logBefore(JoinPoint joinPoint) {
         loggingConfig.logMessage("Entering the method: {}", joinPoint.getSignature());
     }
 
-    @After("loggingMethods()")
+    @After("loggingPointcut()")
     public void logAfter(JoinPoint joinPoint) {
         loggingConfig.logMessage("Output of the method: {}", joinPoint.getSignature());
     }
 
-    @AfterReturning(pointcut = "loggingMethods()", returning = "result")
+    @AfterReturning(pointcut = "loggingPointcut()", returning = "result")
     public void handleResult(JoinPoint joinPoint, Object result) {
         loggingConfig.logMessage("After returning {}", joinPoint.getSignature().toShortString());
     }
 
-    @AfterThrowing(pointcut = "loggingMethods()", throwing = "e")
+    @AfterThrowing(pointcut = "loggingPointcut()", throwing = "e")
     public void handleException(JoinPoint joinPoint, Exception e) {
         loggingConfig.logMessage("After exception {}", joinPoint.getSignature().toShortString());
         loggingConfig.logMessage("An error occurred: ", e);
