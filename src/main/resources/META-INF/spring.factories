@@ -1,0 +1,2 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+shakhaev.spring.logging.starter.config.LogAutoConfiguration
